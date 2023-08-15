@@ -1,0 +1,390 @@
+#!ipxe
+
+
+set menu_version 1.7.0
+set server_ip http://<%- auth %><%- boot_ip %>
+set nfs_ip <%- boot_ip %>
+set port <%= port %>
+set update <%= update %>
+set update_version <%= update_version %>
+set version <%= version %>
+
+
+
+set space:hex 20:20
+set space ${space:string}
+set pass 111 
+
+set esc:hex 1b            # ANSI escape character - "^["
+set cls ${esc:string}[2J  # ANSI clear screen sequence - "^[[2J"
+echo ${cls}
+
+console --x 1024 --y 768 
+goto start
+
+echo
+echo ..........................................
+echo ..........................................
+echo ..........................................
+echo ..........................................
+echo ..........................................
+echo ........TFTP-NP 2022 ${version} by Naben!........
+echo ..........................................
+echo ..........................................
+echo ..........................................
+echo ..........................................
+echo ..........................................
+echo    
+:first
+
+
+
+echo
+echo
+prompt --key 0x13 ......Press secret key to continue........ && goto start || goto tryagain
+echo
+echo
+:tryagain
+echo ......Press secret key to continue........ && goto first
+
+
+
+:start
+colour --rgb 0xffffff 6
+#cpair --foreground 7 --background 9 0
+cpair --foreground 6 --background 9 1
+cpair --foreground 7 --background 1 2
+cpair --foreground 7 --background 9 3
+cpair --foreground 7 --background 9 4
+cpair --foreground 7 --background 9 5
+cpair --foreground 7 --background 9 6
+cpair --foreground 7 --background 9 7
+
+#console -l 32 -r 32 -t 32 -b 32 -k --x 1024 --y 768 -d 24  -p ${server_ip}:${port}/${platform}.png
+#imgfree ${platform}.png
+set cls:hex 1b:5b:4a
+set cls ${cls:string}
+menu TFTP-NP 2022 ${version} ${boot_mode} ${update} ${update_version} 
+item --gap ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${space} MAC:${net0/mac:hexhyp} ${space} IP:${ip}
+item --gap
+
+item --gap ACRONIS MENU
+	item acronisdd ${space} * Acronis Disk Director 12
+	item acronisti ${space} * Acronis True Image 2017
+
+item --gap WINDOWS PE MENU
+    item acronispe ${space} * Acronis PE
+    item strelec ${space} * Strelec PE
+    item bootpe ${space} * Boot PE	
+	item Macrium ${space} * Macrium PE	
+	
+item --gap WINDOWS INSTALL MENU
+	item win10unattend ${space} * Windows 10 Unattended Install	
+	item win10 ${space} * Windows 10 Pro Install	
+	
+item --gap LINUX MENU
+	item ubuntu22 ${space} * Ubuntu 22.04
+	item linuxmint21 ${space} * Linux Mint 21.1
+	item kali ${space} * Kali Linux 
+	item brc ${space} * BRC
+	item pm ${space} * Parted Magic
+	
+item --gap ANTIVIRUSES MENU
+	item kasper ${space} * Kaspersky Rescue Disk 2018 (long booting)  
+	item eset ${space} * ESET Antivirus    
+    item drweb ${space} * DR.WEB	 
+	
+item --gap UTILS MENU
+	item rwpa ${space} * Windows Password Recovery
+	# Для режима UEFI
+	iseq ${platform} efi && item memtest_86_efi ${space} * Memtest86 EFI ||
+	# Для режима BIOS, добавляю утилиты использующие Memdisk           
+	iseq ${platform} pcbios && item mtfd ${space} * Memory Test Floppy Disk || 
+	iseq ${platform} pcbios && item hddarts ${space} * HD Diagnostic and Repair Tools ||
+    iseq ${platform} pcbios && item memtest ${space} * Memtest86+ (v5.31) ||
+    iseq ${platform} pcbios && item goldmem ${space} * GoldMemory ||	
+    iseq ${platform} pcbios && item goldmempro ${space} * GoldMemory PRO ||
+
+item --gap NETINSTALL MENU
+	item nabeninstall ${space} * Naben Install        
+
+item --gap iIPXE shell
+	item shell ${space} * Drop to iPXE shell 
+	item config ${space} * Go to config
+	item reboot ${space} * Reboot    
+	item poweroff ${space} * Poweroff 
+	item exit ${space} * Exit
+	
+choose target && goto ${target}
+
+:acronisdd
+echo Acronis Disk Director 12
+echo
+set http_path boot/soft/acronis
+kernel ${server_ip}:${port}/${http_path}/add2012_3297/x64/dat6.dat           || goto failed
+initrd ${server_ip}:${port}/${http_path}/add2012_3297/x64/dat7.dat           || goto failed
+initrd ${server_ip}:${port}/${http_path}/add2012_3297/x64/dat8.dat           || goto failed 
+imgargs dat6.dat initrd=dat7.dat initrd=dat8.dat vga=791 force_modules=usbhid quiet 
+boot || goto failed
+
+:acronisti
+echo Acronis True Image 2017
+echo
+set http_path boot/soft/acronis
+kernel ${server_ip}:${port}/${http_path}/ati_ng_2017_6209/2.krn              || goto failed
+initrd ${server_ip}:${port}/${http_path}/ati_ng_2017_6209/2.fs               || goto failed
+initrd ${server_ip}:${port}/${http_path}/ati_ng_2017_6209/2-1.fs             || goto failed 
+imgargs 2.krn initrd=2.fs initrd=2-1.fs vga=791 quiet
+boot || goto failed
+
+:acronispe
+echo Acronis PE
+echo
+set http_path boot/soft/acronis/pe
+kernel ${server_ip}:${port}/${http_path}/wimboot                             || goto failed
+initrd ${server_ip}:${port}/${http_path}/boot/bcd            BCD             || goto failed
+initrd ${server_ip}:${port}/${http_path}/boot/boot.sdi       boot.sdi        || goto failed
+initrd ${server_ip}:${port}/${http_path}/sources/boot.wim    boot.wim        || goto failed
+boot || goto failed
+
+:bootpe
+echo BOOT PE
+echo
+set http_path boot/soft/bootpe
+kernel ${server_ip}:${port}/${http_path}/wimboot || goto failed
+initrd ${server_ip}:${port}/${http_path}/boot/bcd            BCD             || goto failed
+initrd ${server_ip}:${port}/${http_path}/boot/boot.sdi       boot.sdi        || goto failed
+initrd ${server_ip}:${port}/${http_path}/sources/boot.wim    boot.wim        || goto failed
+boot || goto failed
+
+:strelec
+echo Strelec PE
+echo
+set http_path boot/soft/strelec
+kernel ${server_ip}:${port}/${http_path}/wimboot || goto failed
+initrd --name ip ${server_ip}:${port}/ip ip || goto failed
+initrd --name network.cmd ${server_ip}:${port}/${http_path}/network.cmd network.cmd || goto failed
+initrd --name bootx64.efi ${server_ip}:${port}/${http_path}/bootx64.efi bootx64.efi || goto failed
+initrd --name bootmgr.exe ${server_ip}:${port}/${http_path}/bootmgr64.exe bootmgr.exe || goto failed
+initrd --name BCD ${server_ip}:${port}/${http_path}/BCD BCD || goto failed 
+initrd --name boot.sdi ${server_ip}:${port}/${http_path}/boot.sdi boot.sdi || goto failed
+initrd --name boot.wim ${server_ip}:${port}/${http_path}/strelec10x64.wim boot.wim || goto failed
+boot || goto failed
+
+:rwpa
+echo Windows Password Recovery
+echo
+set http_path boot/soft/rwpa
+kernel ${server_ip}:${port}/${http_path}/wimboot                             || goto failed
+initrd ${server_ip}:${port}/${http_path}/bcd                 BCD             || goto failed
+initrd ${server_ip}:${port}/${http_path}/boot.sdi            boot.sdi        || goto failed
+initrd ${server_ip}:${port}/${http_path}/sources/boot.wim    boot.wim        || goto failed
+initrd ${server_ip}:${port}/${http_path}/EFI/boot/bootx64.efi bootx64.efi     || goto failed
+boot || goto failed
+
+:win10unattend
+echo Windows 10 Unattended Install
+echo
+set http_path boot/soft/windows
+kernel ${server_ip}:${port}/${http_path}/wimboot                              || goto failed
+initrd ${server_ip}:${port}/${http_path}/winpeshl.ini        winpeshl.ini     || goto failed
+initrd ${server_ip}:${port}/${http_path}/configs/unattend/install.bat    install.bat     || goto failed
+initrd ${server_ip}:${port}/ip                ip                            || goto failed
+initrd ${server_ip}:${port}/${http_path}/bcd                 BCD             || goto failed
+initrd ${server_ip}:${port}/${http_path}/boot.sdi            boot.sdi        || goto failed
+initrd ${server_ip}:${port}/${http_path}/sources/boot.wim    boot.wim        || goto failed
+boot || goto failed
+
+:win10
+echo Windows 10 Pro Setup
+echo
+set http_path boot/soft/windows
+kernel ${server_ip}:${port}/${http_path}/wimboot                             || goto failed
+initrd ${server_ip}:${port}/${http_path}/winpeshl.ini        winpeshl.ini    || goto failed
+initrd ${server_ip}:${port}/${http_path}/configs/fresh/install.bat   install.bat     || goto failed
+initrd ${server_ip}:${port}/ip ip              || goto failed
+initrd ${server_ip}:${port}/${http_path}/bcd                 BCD             || goto failed
+initrd ${server_ip}:${port}/${http_path}/boot.sdi            boot.sdi        || goto failed
+initrd ${server_ip}:${port}/${http_path}/sources/boot.wim    boot.wim        || goto failed
+boot || goto failed
+
+:memtest_86_efi
+echo Memtest86 EFI
+echo
+set http_path boot/soft/utils
+kernel ${server_ip}:${port}/${http_path}/memtest_86_efi/memtest64.efi memtest64.efi || goto start
+boot || goto start
+
+:memtest
+echo Memtest 5.3.1+
+echo
+set http_path boot/soft/utils
+kernel ${server_ip}:${port}/${http_path}/memdisk/memdisk                     || goto failed
+initrd ${server_ip}:${port}/${http_path}/memtest/mt531b.iso                  || goto failed
+imgargs memdisk iso raw || goto failed
+boot || goto failed
+goto start
+
+:goldmem
+echo Goldmem
+echo
+set http_path boot/soft/utils
+kernel ${server_ip}:${port}/${http_path}/memdisk/memdisk                     || goto failed
+initrd ${server_ip}:${port}/${http_path}/goldmem/goldmem.iso                 || goto failed
+imgargs memdisk iso raw || goto failed
+boot || goto failed
+goto start
+
+:goldmempro
+echo Goldmem PRO
+echo
+set http_path boot/soft/utils
+sanboot --drive 0x00 ${server_ip}:${port}/${http_path}/goldmempro/floppy.img || goto failed
+boot || goto failed
+goto start
+
+:mtfd
+echo Memory Test Floppy Disk
+echo
+set http_path boot/soft/utils
+initrd ${server_ip}:${port}/${http_path}/mtfd/mtfd.gz || read void
+kernel ${server_ip}:${port}/${http_path}/memdisk/memdisk || read void
+boot || goto failed
+
+:hddarts
+echo HD Diagnostic and Repair Tools
+echo
+set http_path boot/soft/utils
+initrd ${server_ip}:${port}/${http_path}/hddarts/hddarts.gz || read void
+kernel ${server_ip}:${port}/${http_path}/memdisk/memdisk || read void
+boot || goto failed
+
+:kasper
+echo Kaspersky
+echo
+set http_path boot/soft/antivir/kaspersky                                    || goto failed
+kernel ${server_ip}:${port}/${http_path}/boot/grub/k-x86_64                  || goto failed
+initrd ${server_ip}:${port}/${http_path}/boot/grub/initrd.xz                 || goto failed
+imgargs k-x86_64 initrd=initrd.xz netboot=${server_ip}:${port}/${http_path} ro net.ifnames=0 lang=ru dostartx -- 
+boot 
+
+:eset
+echo ESET
+echo
+set http_path boot/soft/antivir/eset
+set nfs_path antivir/eset
+kernel ${server_ip}:${port}/${http_path}/casper/vmlinuz                      || goto failed
+initrd ${server_ip}:${port}/${http_path}/casper/initrd.lz                    || goto failed
+imgargs vmlinuz initrd=initrd.lz ip=dhcp netboot=nfs nfsroot=${nfs_ip}:/tftp-np/${nfs_path} -o user=serva,pass=avres,rw boot=casper root=/dev/nfs  quiet  --  || goto failed
+boot || goto failed
+
+:drweb
+echo Dr.Web
+echo
+echo After start plz open console and enter command "sudo dhclient" to enable network
+sleep 3
+echo
+set http_path boot/soft/antivir/drweb
+set nfs_path antivir/drweb
+kernel ${server_ip}:${port}/${http_path}/casper/vmlinuz                      || goto failed
+initrd ${server_ip}:${port}/${http_path}/casper/initrd.lz                    || goto failed
+imgargs vmlinuz initrd=initrd.lz ip=dhcp netboot=nfs nfsroot=${nfs_ip}:/tftp-np/${nfs_path} rw boot=casper root=/dev/nfs union=aufs maybe-ubiquity quiet console=tty1 --- debian-installer/language=ru keyboard-configuration/layoutcode?=ru || goto failed 
+boot || goto failed
+
+:kali
+echo Kali Linux
+echo
+set http_path boot/soft/linux/kali
+kernel ${server_ip}:${port}/${http_path}/live/vmlinuz                      || goto failed
+initrd ${server_ip}:${port}/${http_path}/live/initrd.img                    || goto failed
+imgargs vmlinuz toram initrd=initrd.img ip=dhcp boot=live components username=kali hostname=kali-live fetch=${server_ip}:${port}/${http_path}/live/filesystem.squashfs locale=ru_RU
+boot || goto failed
+
+:linuxmint21
+echo Linux Mint 21.1
+echo
+echo After start plz open console and enter command "sudo dhclient" to enable network
+sleep 3
+echo
+set http_path boot/soft/linux/linuxmint21
+kernel ${server_ip}:${port}/${http_path}/casper/vmlinuz                      || goto failed
+initrd ${server_ip}:${port}/${http_path}/casper/initrd.lz                    || goto failed
+imgargs vmlinuz initrd=initrd.lz root=/dev/ram0 ramdisk_size=4000000 ip=dhcp url=${server_ip}:${port}/${http_path}/linuxmint-21.1-cinnamon-64bit.iso boot=casper ide=nodma locale=ru_RU quiet ---
+boot || goto failed
+
+:ubuntu22
+echo Ubuntu 22.04
+echo
+echo After start plz open console and enter command "sudo dhclient" to enable network
+sleep 3
+echo
+set http_path boot/soft/linux/ubuntu22
+kernel ${server_ip}:${port}/${http_path}/casper/vmlinuz                      || goto failed
+initrd ${server_ip}:${port}/${http_path}/casper/initrd                       || goto failed
+imgargs vmlinuz initrd=initrd root=/dev/ram0 ramdisk_size=4000000 ip=dhcp url=${server_ip}:${port}/${http_path}/ubuntu-22.04.1-desktop-amd64.iso boot=casper ide=nodma locale=ru_RU quiet ---
+boot || goto failed
+
+:brc
+echo BRC
+echo
+set http_path boot/soft/linux/brc
+set nfs_path linux/brc
+kernel ${server_ip}:${port}/${http_path}/casper/vmlinuz                      || goto failed
+initrd ${server_ip}:${port}/${http_path}/casper/initrd.lz                    || goto failed
+imgargs vmlinuz toram initrd=initrd.lz ip=dhcp root=/dev/nfs boot=casper netboot=nfs nfsroot=${nfs_ip}:/tftp-np/${nfs_path} ip=dhcp locale=ru_RU quiet -- || goto failed
+boot || goto failed
+
+:pm
+echo Parted Magic
+echo
+set http_path boot/soft/linux/pmagic
+kernel ${server_ip}:${port}/${http_path}/pmagic/bzImage64                    || goto failed
+initrd ${server_ip}:${port}/${http_path}/pmagic/initrd.img                   || goto failed
+initrd ${server_ip}:${port}/${http_path}/pmagic/fu.img                       || goto failed    
+initrd ${server_ip}:${port}/${http_path}/pmagic/m64.img                      || goto failed
+initrd ${server_ip}:${port}/${http_path}/pmagic/files.cgz                    || goto failed
+imgargs bzImage64 initrd=initrd.img initrd=fu.img initrd=m64.img initrd=files.cgz ip=dhcp edd=on vga=normal vmalloc=608MiB || goto failed
+boot || goto failed
+
+:Macrium
+echo BOOT MACRIUM PE
+echo
+set http_path boot/soft
+kernel ${server_ip}:${port}/${http_path}/macrium/wimboot                    || goto failed
+initrd ${server_ip}:${port}/${http_path}/macrium/bootx64.efi bootx64.efi    || goto failed
+initrd ${server_ip}:${port}/${http_path}/macrium/BCD BCD                    || goto failed
+initrd ${server_ip}:${port}/${http_path}/macrium/boot.sdi boot.sdi          || goto failed
+initrd ${server_ip}:${port}/${http_path}/macrium/boot.wim boot.wim          || goto failed
+boot || goto failed
+
+:nabeninstall
+echo Naben Install
+chain https://pastebin.com/raw/iVDe7LUW || goto failed
+
+:failed
+echo Booting failed, dropping to shell
+goto shell
+
+:shell
+echo Type 'exit' to get the back to the menu
+shell
+set menu-timeout 0
+set submenu-timeout 0
+goto start
+
+:reboot
+reboot --warm ||
+goto start
+
+:poweroff
+poweroff ||
+goto start
+
+:config
+config ||
+goto start
+
+:exit
+echo Continuing BIOS boot order...
+sleep 1
+exit 0

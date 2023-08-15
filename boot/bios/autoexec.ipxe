@@ -1,0 +1,3 @@
+#!ipxe
+set boot_mode (BIOS mode)
+boot http://192.168.241.251:5000/menu
