@@ -1,4 +1,0 @@
-#!ipxe
-set boot_mode (EFI mode)
-dhcp
-boot http://192.168.241.251:5000/menu
