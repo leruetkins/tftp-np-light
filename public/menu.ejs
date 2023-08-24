@@ -1,7 +1,7 @@
 #!ipxe
 
 
-set menu_version 1.7.0
+set menu_version 1.7.3
 set server_ip http://<%- auth %><%- boot_ip %>
 set nfs_ip <%- boot_ip %>
 set port <%= port %>
@@ -75,6 +75,7 @@ item --gap ACRONIS MENU
 item --gap WINDOWS PE MENU
     item acronispe ${space} * Acronis PE
     item strelec ${space} * Strelec PE
+    item streleciso ${space} * Strelec PE ISO   
     item bootpe ${space} * Boot PE	
 	item Macrium ${space} * Macrium PE	
 	
@@ -95,7 +96,6 @@ item --gap ANTIVIRUSES MENU
     item drweb ${space} * DR.WEB	 
 	
 item --gap UTILS MENU
-	item rwpa ${space} * Windows Password Recovery
 	# Для режима UEFI
 	iseq ${platform} efi && item memtest_86_efi ${space} * Memtest86 EFI ||
 	# Для режима BIOS, добавляю утилиты использующие Memdisk           
@@ -171,15 +171,18 @@ initrd --name boot.sdi ${server_ip}:${port}/${http_path}/boot.sdi boot.sdi || go
 initrd --name boot.wim ${server_ip}:${port}/${http_path}/strelec10x64.wim boot.wim || goto failed
 boot || goto failed
 
-:rwpa
-echo Windows Password Recovery
+:streleciso
+echo Strelec PE
 echo
-set http_path boot/soft/rwpa
-kernel ${server_ip}:${port}/${http_path}/wimboot                             || goto failed
-initrd ${server_ip}:${port}/${http_path}/bcd                 BCD             || goto failed
-initrd ${server_ip}:${port}/${http_path}/boot.sdi            boot.sdi        || goto failed
-initrd ${server_ip}:${port}/${http_path}/sources/boot.wim    boot.wim        || goto failed
-initrd ${server_ip}:${port}/${http_path}/EFI/boot/bootx64.efi bootx64.efi     || goto failed
+set http_path boot/soft/strelec
+kernel ${server_ip}:${port}/${http_path}/wimboot || goto failed
+initrd --name ip ${server_ip}:${port}/ip ip || goto failed
+initrd --name network.cmd ${server_ip}:${port}/${http_path}/network_iso.cmd network.cmd || goto failed
+initrd --name bootx64.efi ${server_ip}:${port}/${http_path}/bootx64.efi bootx64.efi || goto failed
+initrd --name bootmgr.exe ${server_ip}:${port}/${http_path}/bootmgr64.exe bootmgr.exe || goto failed
+initrd --name BCD ${server_ip}:${port}/${http_path}/BCD BCD || goto failed 
+initrd --name boot.sdi ${server_ip}:${port}/${http_path}/boot.sdi boot.sdi || goto failed
+initrd --name boot.wim ${server_ip}:${port}/${http_path}/strelec10x64.wim boot.wim || goto failed
 boot || goto failed
 
 :win10unattend
