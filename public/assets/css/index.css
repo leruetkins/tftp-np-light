@@ -237,6 +237,7 @@ html.dragging::before {
 }
 
 .comments {
+  margin: 0.7em;
   padding: 0.2em;
   font-size: 1.3em;    
 }
