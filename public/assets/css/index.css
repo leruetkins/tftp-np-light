@@ -242,7 +242,6 @@ html.dragging::before {
 }
 
 .comments {
-
   font-size: 1em;    
 }
 
@@ -465,7 +464,7 @@ html.dragging::before {
 }
 
 .item-list {
-	margin: 1em;
+	margin: 1.2em;  
 	line-height: 1.2;
 }
 
