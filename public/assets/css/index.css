@@ -10,6 +10,11 @@ html {
 	font-family: "roboto_condensedbold", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+h1, h2, h3, h4 {
+	margin: 0em;
+	padding: 0em;
+}
+
 body {
 	color: #333;
 	font-size: 0.625em;
