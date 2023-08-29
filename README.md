@@ -1,8 +1,6 @@
-# tftp-np
+# tftp-np -  PXE server of dreams!  
 ![изображение](https://github.com/leruetkins/tftp-np-light/assets/15270519/86c106e4-fe32-48ae-9e69-eae0a3256330)
 
- PXE server of dreams!  
- 
 I will present to your attention a bootable PXE server. This server allows you to run operating systems and useful programs over a network using PXE technology.
 
 In this case, the iPXE bootloader is used. Works on BIOS and UEFI systems, there are only some differences in the menus.
