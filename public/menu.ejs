@@ -1,7 +1,7 @@
 #!ipxe
 
 
-set menu_version 1.7.5
+set menu_version 1.7.7
 set server_ip http://<%- auth %><%- boot_ip %>
 set nfs_ip <%- boot_ip %>
 set port <%= port %>
@@ -107,6 +107,7 @@ item --gap UTILS MENU
 
 item --gap NETINSTALL MENU
 	item nabeninstall ${space} * Naben Install        
+	#item fog ${space} * Fog Project   
 
 item --gap iIPXE shell
 	item shell ${space} * Drop to iPXE shell 
@@ -116,6 +117,19 @@ item --gap iIPXE shell
 	item exit ${space} * Exit
 	
 choose target && goto ${target}
+
+:fog
+set arch ${buildarch}
+params
+param mac0 ${net0/mac}
+param arch ${arch}
+param platform ${platform}
+param product ${product}
+param manufacturer ${product}
+param ipxever ${version}
+param filename ${filename}
+param sysuuid ${uuid}
+chain http://192.168.0.226/fog/service/ipxe/boot.php##params
 
 :acronisdd
 echo Acronis Disk Director 12
