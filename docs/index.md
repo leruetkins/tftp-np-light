@@ -1,2 +1,2 @@
-﻿1. [FAQ](faq.md)
+﻿1. [FAQ](faq-list.md)
 
