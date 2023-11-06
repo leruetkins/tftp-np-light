@@ -4,7 +4,7 @@
 
 tftp-np\boot\soft\windows\sources
 ### 2.
-Делаете копию папки \tftp-np\boot\soft\windows\configs\jq и называете как хотите, например win11 и получаем такой вот путь: \tftp-np\boot\soft\windows\configs\win11 и запоминаете как назвали папку, потом мы вставим этот путь в файл меню.
+Делаете копию папки [\tftp-np\boot\soft\windows\configs\jq][] и называете как хотите, например win11 и получаем такой вот путь: \tftp-np\boot\soft\windows\configs\win11 и запоминаете как назвали папку, потом мы вставим этот путь в файл меню.
 ### 3.
 В файле \tftp-np\boot\soft\windows\configs\win11\install.bat в конце замените jq на win11, что бы получилось так:
 T:\configs\win11\commands.cmd
@@ -31,3 +31,5 @@ boot || goto failed
 ```
 ### 6.
 Загружаетесь по PXE и выбираете этот пункт меню для загрузки.
+
+[\tftp-np\boot\soft\windows\configs\jq]: ./boot/soft/windows/configs/jq
