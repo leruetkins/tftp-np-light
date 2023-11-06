@@ -1,13 +1,14 @@
 #!ipxe
 
 
-set menu_version 1.7.7
+set menu_version 1.8.2
 set server_ip http://<%- auth %><%- boot_ip %>
 set nfs_ip <%- boot_ip %>
 set port <%= port %>
 set update <%= update %>
 set update_version <%= update_version %>
 set version <%= version %>
+set lockscreen <%= lockscreen %>
 
 
 
@@ -20,8 +21,10 @@ set cls ${esc:string}[2J  # ANSI clear screen sequence - "^[[2J"
 echo ${cls}
 
 console --x 1024 --y 768 
-goto start
+iseq ${lockscreen} 0 && goto start || goto lockscreen
 
+
+:lockscreen
 echo
 echo ..........................................
 echo ..........................................
