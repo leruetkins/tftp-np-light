@@ -72,54 +72,55 @@ item --gap ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${spac
 item --gap
 
 item --gap ACRONIS MENU
-	item acronisdd ${space} * Acronis Disk Director 12
-	item acronisti ${space} * Acronis True Image 2017
+    item acronisdd ${space} * Acronis Disk Director 12
+    item acronisti ${space} * Acronis True Image 2017
 
 item --gap WINDOWS PE MENU
     item acronispe ${space} * Acronis PE
     item strelec ${space} * Strelec PE
-    item streleciso ${space} * Strelec PE ISO   
-    item bootpe ${space} * Boot PE	
-	item Macrium ${space} * Macrium PE	
-	
+    item streleciso ${space} * Strelec PE ISO
+    item bootpe ${space} * Boot PE    
+    item Macrium ${space} * Macrium PE
+
 item --gap WINDOWS INSTALL MENU
-	item win10unattend ${space} * Windows 10 Unattended Install	
-	item win10 ${space} * Windows 10 Pro Install
-	item jq ${space} * Windows 10 Pro Unattended JQ	
-	
+    item win10unattend ${space} * Windows 10 Unattended Install    
+    item win10 ${space} * Windows 10 Pro Install
+    item jq ${space} * Windows 10 Pro Unattended JQ
+
 item --gap LINUX MENU
-	item ubuntu22 ${space} * Ubuntu 22.04
-	item linuxmint21 ${space} * Linux Mint 21.1
-	item kali ${space} * Kali Linux 
-	item brc ${space} * BRC
-	item pm ${space} * Parted Magic
-	
+    item ubuntu22 ${space} * Ubuntu 22.04
+    item linuxmint21 ${space} * Linux Mint 21.1
+    item kali ${space} * Kali Linux 
+    item brc ${space} * BRC
+    item pm ${space} * Parted Magic
+    
 item --gap ANTIVIRUSES MENU
-	item kasper ${space} * Kaspersky Rescue Disk 2018 (long booting)  
-	item eset ${space} * ESET Antivirus    
-    item drweb ${space} * DR.WEB	 
-	
+    item kasper ${space} * Kaspersky Rescue Disk 2018 (long booting)
+    item eset ${space} * ESET Antivirus
+    item drweb ${space} * DR.WEB
+    
 item --gap UTILS MENU
-	# Для режима UEFI
-	iseq ${platform} efi && item memtest_86_efi ${space} * Memtest86 EFI ||
-	# Для режима BIOS, добавляю утилиты использующие Memdisk           
-	iseq ${platform} pcbios && item mtfd ${space} * Memory Test Floppy Disk || 
-	iseq ${platform} pcbios && item hddarts ${space} * HD Diagnostic and Repair Tools ||
+    # Для режима UEFI
+    iseq ${platform} efi && item memtest_86_efi ${space} * Memtest86 EFI ||
+    # Для режима BIOS, добавляю утилиты использующие Memdisk           
+    iseq ${platform} pcbios && item mtfd ${space} * Memory Test Floppy Disk ||
+    iseq ${platform} pcbios && item hddarts ${space} * HD Diagnostic and Repair Tools ||
     iseq ${platform} pcbios && item memtest ${space} * Memtest86+ (v5.31) ||
-    iseq ${platform} pcbios && item goldmem ${space} * GoldMemory ||	
+    iseq ${platform} pcbios && item goldmem ${space} * GoldMemory ||
     iseq ${platform} pcbios && item goldmempro ${space} * GoldMemory PRO ||
 
 item --gap NETINSTALL MENU
-	item nabeninstall ${space} * Naben Install        
-	#item fog ${space} * Fog Project   
+    item nabeninstall ${space} * Naben Install        
+    #item fog ${space} * Fog Project
+    #item iventoy ${space} * iVentoy     
 
 item --gap iIPXE shell
-	item shell ${space} * Drop to iPXE shell 
-	item config ${space} * Go to config
-	item reboot ${space} * Reboot    
-	item poweroff ${space} * Poweroff 
-	item exit ${space} * Exit
-	
+    item shell ${space} * Drop to iPXE shell 
+    item config ${space} * Go to config
+    item reboot ${space} * Reboot    
+    item poweroff ${space} * Poweroff 
+    item exit ${space} * Exit
+    
 choose target && goto ${target}
 
 :fog
@@ -134,6 +135,16 @@ param ipxever ${version}
 param filename ${filename}
 param sysuuid ${uuid}
 chain http://192.168.0.226/fog/service/ipxe/boot.php##params
+
+:iventoy
+set iventoy_ip 192.168.0.10
+set arch ${arch}
+set mac ${net0/mac}
+set mask ${net0/netmask}
+set gw ${net0/gateway}
+set dns ${net0/dns}
+set platform ${platform}
+chain ${server_ip}:${port}/iventoy?iventoy_ip=${iventoy_ip}&mac=${mac}&mask=${mask}&gw=${gw}&dns=${dns}&platform=${platform}
 
 :acronisdd
 echo Acronis Disk Director 12
@@ -230,7 +241,7 @@ initrd ${server_ip}:${port}/${http_path}/sources/boot.wim    boot.wim        || 
 boot || goto failed
 
 :jq
-echo Windows 10 Pro Unattended JQ	
+echo Windows 10 Pro Unattended JQ    
 echo
 set http_path boot/soft/windows
 kernel ${server_ip}:${port}/${http_path}/wimboot                             || goto failed
