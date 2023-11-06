@@ -32,4 +32,4 @@ boot || goto failed
 ### 6.
 Загружаетесь по PXE и выбираете этот пункт меню для загрузки.
 
-[\tftp-np\boot\soft\windows\configs\jq]: ./boot/soft/windows/configs/jq
+[\tftp-np\boot\soft\windows\configs\jq]: ../boot/soft/windows/configs/jq
