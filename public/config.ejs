@@ -22,9 +22,8 @@
     <strong><a href="/credits">Credits</a></strong>
   </div>
 
-  <h3>
-    <div class="panel" style="min-height: 20px; text-align: center; margin: 0.8em;" id="notification"></div>
-  </h3>
+  
+    <div class="panel" style="min-height: 20px; text-align: center;"><h3 id="notification"></h3></div>
   <div class="panel" id="result">
     
   </div>
@@ -54,71 +53,77 @@
       return response.json();
     }
 
-    // Функция для отображения результата на веб-странице
-    function displayData(data) {
-      document.getElementById("get").disabled = true;
-      document.getElementById("write").disabled = true;
-      let div = document.getElementById("result");
-      div.innerHTML = "";
-      let entries = Object.entries(data.server);
-      for (let [key, value] of entries) {
-        if (value.value === "0" || value.value === "1") {
-  let wrapper = document.createElement("div");
-  div.appendChild(wrapper);
-  
-  let label = document.createElement("label");
-  label.textContent = key + ": ";
-  label.style.fontWeight = "bold"; 
-  label.style.fontSize = "14px";
-  
-  let checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.checked = value.value === "1";
-  label.appendChild(checkbox);
-  
-  wrapper.appendChild(label);
-  
-  let description = document.createElement("div");
-  description.classList.add("description");
-  description.textContent = value.description;
-  wrapper.appendChild(description);
-  
-  // Добавление разделительной полосы
-  let separator = document.createElement("hr");
-  wrapper.appendChild(separator);
-} else {
-  let p = document.createElement("div");
-  p.textContent = key + ": ";
-  p.style.fontWeight = "bold"; 
-  p.style.fontSize = "14px";
-  
-  let inputBox = document.createElement("input");
-  inputBox.type = "text";
-  inputBox.value = value.value;
-  inputBox.id = key;
-  inputBox.name = key;
-  p.appendChild(inputBox);
-  
-  div.appendChild(p);
-  
-  let description = document.createElement("div");
-  description.classList.add("description");
-  description.textContent = value.description;
-  div.appendChild(description);
-  
-  // Добавление разделительной полосы
-  let separator = document.createElement("hr");
-  div.appendChild(separator);
+      // Функция для отображения результата на веб-странице
+      function displayData(data) {
+  document.getElementById("get").disabled = true;
+  document.getElementById("write").disabled = true;
+  let div = document.getElementById("result");
+  div.innerHTML = "";
+
+  function createInputField(key, value, isCheckbox) {
+    let wrapper = document.createElement("div");
+    div.appendChild(wrapper);
+
+    let label = document.createElement("label");
+    label.textContent = key + ": ";
+    label.style.fontWeight = "bold";
+    label.style.fontSize = "14px";
+
+    let inputElement = isCheckbox ? document.createElement("input") : document.createElement("input");
+    inputElement.type = isCheckbox ? "checkbox" : "text";
+    inputElement.value = isCheckbox ? (value.value === "1") : value.value;
+    if (!isCheckbox) {
+      inputElement.id = key;
+      inputElement.name = key;
+    }
+    label.appendChild(inputElement);
+    wrapper.appendChild(label);
+
+    let description = document.createElement("div");
+    description.classList.add("description");
+    description.textContent = value.description;
+    wrapper.appendChild(description);
+
+    // Add a separator
+    let separator = document.createElement("hr");
+    wrapper.appendChild(separator);
+  }
+
+  // Title for server.data
+  let serverTitle = document.createElement("h2");
+  serverTitle.textContent = "[Server]";
+  div.appendChild(serverTitle);
+
+  // Handle data.server
+  if (data.server) {
+    let serverEntries = Object.entries(data.server);
+    for (let [key, value] of serverEntries) {
+      createInputField(key, value, value.value === "0" || value.value === "1");
+    }
+  }
+
+  // Title for share.data
+  let shareTitle = document.createElement("h2");
+  shareTitle.textContent = "[Share]";
+  div.appendChild(shareTitle);
+
+  // Handle data.share
+  if (data.share) {
+    let shareEntries = Object.entries(data.share);
+    for (let [key, value] of shareEntries) {
+      createInputField(key, value, value.value === "0" || value.value === "1");
+    }
+    
+    document.getElementById("notification").innerHTML = "Настройки с сервера получены";
+    setTimeout(() => {
+      document.getElementById("get").disabled = false;
+      document.getElementById("write").disabled = false;
+      document.getElementById("notification").innerHTML = "Config";
+    }, 2000);
+  }
 }
 
-        document.getElementById("notification").innerHTML = "Настройки с сервера получены";
-        setTimeout(() => {
-          document.getElementById("get").disabled = false;
-          document.getElementById("write").disabled = false;
-          document.getElementById("notification").innerHTML = "Config";
-        }, 2000);
-      }
-    }
+
 
     // Функция для вызова функции postData и передачи результата функции displayData
     function getData() {
