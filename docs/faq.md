@@ -5,8 +5,8 @@ tftp-np\boot\soft\windows\sources
 ### 2.  
 Делаете копию папки [tftp-np\boot\soft\windows\configs\jq][] и называете как хотите, например **win11** и получаем такой вот путь: tftp-np\boot\soft\windows\configs\win11 и запоминаете как назвали папку, потом мы вставим этот путь в файл меню.
 ### 3.  
-В файле \tftp-np\boot\soft\windows\configs\win11\install.bat в конце замените jq на win11, что бы получилось так:
-T:\configs\win11\commands.cmd
+В файле \tftp-np\boot\soft\windows\configs\win11\install.bat в конце замените **jq** на **win11**, что бы получилось так:
+T:\configs\\**win11**\\commands.cmd
 ### 4.
 В файл меню [tftp-np\public\menu.ejs][] добавляете новый пункт загрузки, что бы получилось вот так:
 item --gap WINDOWS INSTALL MENU
