@@ -40,6 +40,6 @@ echo.
 @echo        Created by Naben!
 @echo.                           
 @echo off
-T:\configs\jq\win10_unattend.cmd
+T:\configs\jq\commands.cmd
 )
 endlocal
