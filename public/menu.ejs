@@ -81,7 +81,8 @@ item --gap WINDOWS PE MENU
 	
 item --gap WINDOWS INSTALL MENU
 	item win10unattend ${space} * Windows 10 Unattended Install	
-	item win10 ${space} * Windows 10 Pro Install	
+	item win10 ${space} * Windows 10 Pro Install
+	item jq ${space} * Windows 10 Pro Unattended JQ	
 	
 item --gap LINUX MENU
 	item ubuntu22 ${space} * Ubuntu 22.04
@@ -220,6 +221,20 @@ kernel ${server_ip}:${port}/${http_path}/wimboot                             || 
 initrd ${server_ip}:${port}/${http_path}/winpeshl.ini        winpeshl.ini    || goto failed
 initrd ${server_ip}:${port}/${http_path}/configs/fresh/install.bat   install.bat     || goto failed
 initrd ${server_ip}:${port}/ip ip              || goto failed
+initrd ${server_ip}:${port}/${http_path}/bcd                 BCD             || goto failed
+initrd ${server_ip}:${port}/${http_path}/boot.sdi            boot.sdi        || goto failed
+initrd ${server_ip}:${port}/${http_path}/sources/boot.wim    boot.wim        || goto failed
+boot || goto failed
+
+:jq
+echo Windows 10 Pro Unattended JQ	
+echo
+set http_path boot/soft/windows
+kernel ${server_ip}:${port}/${http_path}/wimboot                             || goto failed
+initrd ${server_ip}:${port}/${http_path}/winpeshl.ini        winpeshl.ini    || goto failed
+initrd ${server_ip}:${port}/${http_path}/configs/jq/install.bat   install.bat     || goto failed
+initrd ${server_ip}:${port}/ip_json ip_json              || goto failed
+initrd ${server_ip}:${port}/boot/addons/jq.exe jq.exe              || goto failed
 initrd ${server_ip}:${port}/${http_path}/bcd                 BCD             || goto failed
 initrd ${server_ip}:${port}/${http_path}/boot.sdi            boot.sdi        || goto failed
 initrd ${server_ip}:${port}/${http_path}/sources/boot.wim    boot.wim        || goto failed
