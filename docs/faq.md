@@ -1,4 +1,6 @@
-# ﻿Как добавить свой образ Windows
+
+[<- Назад](faq-list.md)
+# Как добавить свой образ Windows
 ### 1.  
 Закидываете образ в формате `es` или `wim`  в папку:  
 tftp-np\boot\soft\windows\sources
