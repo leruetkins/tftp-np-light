@@ -170,42 +170,56 @@
     // Функция для отправки данных обратно на сервер
     function sendData() {
       document.getElementById("get").disabled = true;
-      document.getElementById("write").disabled = true;
-      // Create an empty object
-      let data = {};
+document.getElementById("write").disabled = true;
+// Create an empty object
+let data = {};
 
-      // Get all elements in result div
-      let resultDiv = document.getElementById("result");
-      let elements = Array.from(resultDiv.querySelectorAll("div,label,input"));
+// Get all elements in result div
+let resultDiv = document.getElementById("result");
+let elements = Array.from(resultDiv.querySelectorAll("div,h2,label,input"));
 
-      // Loop through each element
-      elements.forEach((element) => {
-        // If element is a label with checkbox
-        if (element.tagName === "LABEL" && element.children[0].type === "checkbox") {
-          // Get key and value from label text and checkbox checked property
-          let key = element.textContent.slice(0, -2);
-          let value = element.children[0].checked ? "1" : "0";
-          data[key] = value;
-        }
-        // If element is an input box
-        else
-          if (element.tagName === "INPUT" && element.type === "text") {
-            // Get key and value from the input element's name and value attributes
-            let key = element.name;
-            let value = element.value;
-            data[key] = value;
-          }
-      });
-      // Convert data object to JSON string
-      let jsonString = JSON.stringify(data);
-      const formData = new FormData();
-      formData.append("method", "update_config");
-      formData.append("data", jsonString);
-      // Make post request with JSON string as body
-      fetch('/api', {
-        method: 'POST',
-        body: formData
-      })
+let currentSection = "";
+// Loop through each element
+elements.forEach((element) => {
+  // If element is an h2, set the current section
+  if (element.tagName === "H2") {
+    currentSection = element.textContent.replace(/\[(.*?)\]/, "$1").toLowerCase();
+    return;
+  }
+
+  // If element is a label with checkbox
+  if (element.tagName === "LABEL" && element.children[0].type === "checkbox") {
+    // Get key and value from label text and checkbox checked property
+    let key = element.textContent.slice(0, -2);
+    let value = element.children[0].checked ? "1" : "0";
+    if (currentSection === "server" || currentSection === "share") {
+      data[currentSection] = data[currentSection] || {};
+      data[currentSection][key] = value;
+    }
+  }
+  // If element is an input box
+  else if (element.tagName === "INPUT" && element.type === "text") {
+    // Get key and value from the input element's name and value attributes
+    let key = element.name;
+    let value = element.value;
+    if (currentSection === "server" || currentSection === "share") {
+      data[currentSection] = data[currentSection] || {};
+      data[currentSection][key] = value;
+    }
+  }
+});
+
+// Convert data object to JSON string
+let jsonString = JSON.stringify(data);
+const formData = new FormData();
+formData.append("method", "update_config");
+formData.append("data", jsonString);
+// Make post request with JSON string as body
+fetch('/api', {
+  method: 'POST',
+  body: formData
+});
+
 
 
       var port = Number(document.getElementById("port").value);
@@ -245,6 +259,7 @@
       }, 3000);
 
     }
+    
   </script>
   <script>
     function redirect() {
