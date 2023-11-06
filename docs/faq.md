@@ -8,13 +8,13 @@ tftp-np\boot\soft\windows\sources
 В файле \tftp-np\boot\soft\windows\configs\win11\install.bat в конце замените **jq** на **win11**, что бы получилось так:
 T:\configs\\**win11**\\commands.cmd
 ### 4.
-В файл меню [tftp-np\public\menu.ejs][] добавляете новый пункт загрузки, что бы получилось вот так:
+В файл меню [tftp-np\public\menu.ejs][] добавляете новый пункт загрузки, что бы получилось вот так:  
 item --gap WINDOWS INSTALL MENU
     item win11 ${space} * Windows 11 Unattend  
 ### 5.
-Добавляете конфиг этого пункта меню в тот же файл меню tftp-np\public\menu.ejs  для загрузки файлов, жирным выделена наша созданная папка win11:
+Добавляете конфиг этого пункта меню в тот же файл меню [tftp-np\public\menu.ejs][]  для загрузки файлов, жирным выделена наша созданная папка **win11**:
 ```bash
-:win11
+:**win11**
 echo Windows 11 Unattend    
 echo
 set http_path boot/soft/windows
