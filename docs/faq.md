@@ -10,7 +10,7 @@ T:\configs\\**win11**\\commands.cmd
 ### 4.
 В файл меню [tftp-np\public\menu.ejs][] добавляете новый пункт загрузки, что бы получилось вот так:  
 item --gap WINDOWS INSTALL MENU  
-- item win11 ${space} * Windows 11 Unattend  
+item win11 ${space} * Windows 11 Unattend  
 ### 5.
 Добавляете конфиг этого пункта меню в тот же файл меню [tftp-np\public\menu.ejs][]  для загрузки файлов, жирным выделена наша созданная папка **win11**:
 ```bash
