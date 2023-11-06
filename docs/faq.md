@@ -1,6 +1,7 @@
 # ﻿Как добавить свой образ Windows
 ### 1.
-Закидываете образ в формате esd или wim  в папку: tftp-np\boot\soft\windows\sources
+Закидываете образ в формате esd или wim  в папку:
+tftp-np\boot\soft\windows\sources
 ### 2.
 Делаете копию папки \tftp-np\boot\soft\windows\configs\jq и называете как хотите, например win11 и получаем такой вот путь: \tftp-np\boot\soft\windows\configs\win11 и запоминаете как назвали папку, потом мы вставим этот путь в файл меню.
 ### 3.
