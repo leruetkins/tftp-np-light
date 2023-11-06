@@ -20,8 +20,6 @@ echo Port: !port!
 echo Share Login: !share_login!
 echo Share Password: !share_password!
 
-pause
-
 :Line1
 ping -n 2 !ip! | find /i "TTL=">nul
 if %errorlevel%==1 (
@@ -42,6 +40,6 @@ echo.
 @echo        Created by Naben!
 @echo.                           
 @echo off
-T:\commands.cmd
+T:\configs\jq\win10_unattend.cmd
 )
 endlocal
