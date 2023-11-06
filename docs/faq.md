@@ -14,7 +14,7 @@ item win11 ${space} * Windows 11 Unattend
 ### 5.
 Добавляете конфиг этого пункта меню в тот же файл меню [tftp-np\public\menu.ejs][]  для загрузки файлов, жирным выделена наша созданная папка **win11**:
 ```bash
-:**win11**
+:win11
 echo Windows 11 Unattend    
 echo
 set http_path boot/soft/windows
