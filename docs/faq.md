@@ -33,4 +33,5 @@ boot || goto failed
 Загружаетесь по PXE и выбираете этот пункт меню для загрузки.
 
 [tftp-np\boot\soft\windows\configs\jq]: ../boot/soft/windows/configs/jq
-[tftp-np\public\menu.ejs] ../public/menu.ejs
+
+[tftp-np\public\menu.ejs]: ../public/menu.ejs
