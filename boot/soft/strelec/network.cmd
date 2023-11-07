@@ -1,3 +1,6 @@
+@echo off
+setlocal enabledelayedexpansion
+
 set /p ip_json=<ip_json
 echo %ip_json%
 
