@@ -1,15 +1,23 @@
-set /p ip=<ip
-for /f "delims=" %%a in (ip) do (
-    set "first_line=%%a"
-    goto :Line1
-)
+set /p ip_json=<ip_json
+echo %ip_json%
+
+for /f %%A in ('echo !ip_json! ^| jq -r .ip') do set ip=%%A
+for /f %%B in ('echo !ip_json! ^| jq -r .port') do set port=%%B
+for /f %%C in ('echo !ip_json! ^| jq -r .share_login') do set share_login=%%C
+for /f %%D in ('echo !ip_json! ^| jq -r .share_password') do set share_password=%%D
+
+echo IP: !ip!
+echo Port: !port!
+echo Share Login: !share_login!
+echo Share Password: !share_password!
+
 :Line1
-ping -n 2 %first_line% | find /i "TTL=">nul
+ping -n 2 !ip! | find /i "TTL=">nul
 if %errorlevel%==1 (
 ping -n 9 127.0.0.1>NUL
 goto Line1
 ) else (
-net use * \\%first_line%\tftp-np\strelec /USER:PC\Guest pass
+net use * \\!ip!\tftp-np\strelec /USER:!share_login! !share_password!
 ping -n 2 127.0.0.1>NUL
 FOR %%i IN ( c d e f g h i j k l m n o p q r s t u v w y z) DO IF EXIST %%i:\SSTR\WLANProfile SET strelec=%%i:
 start /w WLANDRIVER.exe
@@ -52,3 +60,4 @@ cd /D "%strelec%\SSTR\WLANProfile"
 for /f "tokens=*" %%i in ('dir /b') do netsh.exe wlan add profile filename="%%i" user=all
 exit
 )
+endlocal

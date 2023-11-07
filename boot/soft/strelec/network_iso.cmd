@@ -1,26 +1,28 @@
 @echo off
+setlocal enabledelayedexpansion
 
 set "ip="
 set "port="
-set "user="
-set "password="
+set "http_user="
+set "http_password="
 
-for /f %%a in (ip) do (
-    if not defined ip (
-        set "ip=%%a"
-    ) else if not defined port (
-        set "port=%%a"
-    ) else if not defined user (
-        set "user=%%a"
-    ) else if not defined password (
-        set "password=%%a"
-    )
-)
+set /p ip_json=<ip_json
+echo %ip_json%
+
+for /f %%A in ('echo !ip_json! ^| jq -r .ip') do set ip=%%A
+for /f %%B in ('echo !ip_json! ^| jq -r .port') do set port=%%B
+for /f %%C in ('echo !ip_json! ^| jq -r .http_user') do set http_user=%%C
+for /f %%D in ('echo !ip_json! ^| jq -r .http_password') do set http_password=%%D
+
+echo IP: !ip!
+echo Port: !port!
+echo Share Login: !share_login!
+echo Share Password: !share_password!
 
 if not defined user (
-    set "address=http://%ip%:%port%/boot/soft/strelec/strelec.iso"
+    set "address=http://!ip!:!port!/boot/soft/strelec/strelec.iso"
 ) else (
-    set "address=http://%ip%:%port%/boot/soft/strelec/strelec.iso?user=%user%*password=%password%"
+    set "address=http://!ip!:!port!/boot/soft/strelec/strelec.iso?user=!http_user!*password=!http_password!"
 )
 
 :Line1
@@ -83,3 +85,4 @@ cd /D "%strelec%\SSTR\WLANProfile"
 for /f "tokens=*" %%i in ('dir /b') do netsh.exe wlan add profile filename="%%i" user=all
 exit
 )
+endlocal

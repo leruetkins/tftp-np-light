@@ -191,7 +191,8 @@ echo Strelec PE
 echo
 set http_path boot/soft/strelec
 kernel ${server_ip}:${port}/${http_path}/wimboot || goto failed
-initrd --name ip ${server_ip}:${port}/ip ip || goto failed
+initrd ${server_ip}:${port}/ip_json ip_json              || goto failed
+initrd ${server_ip}:${port}/boot/addons/jq.exe jq.exe              || goto failed
 initrd --name network.cmd ${server_ip}:${port}/${http_path}/network.cmd network.cmd || goto failed
 initrd --name bootx64.efi ${server_ip}:${port}/${http_path}/bootx64.efi bootx64.efi || goto failed
 initrd --name bootmgr.exe ${server_ip}:${port}/${http_path}/bootmgr64.exe bootmgr.exe || goto failed
@@ -205,7 +206,8 @@ echo Strelec PE
 echo
 set http_path boot/soft/strelec
 kernel ${server_ip}:${port}/${http_path}/wimboot || goto failed
-initrd --name ip ${server_ip}:${port}/ip ip || goto failed
+initrd ${server_ip}:${port}/ip_json ip_json              || goto failed
+initrd ${server_ip}:${port}/boot/addons/jq.exe jq.exe              || goto failed
 initrd --name network.cmd ${server_ip}:${port}/${http_path}/network_iso.cmd network.cmd || goto failed
 initrd --name bootx64.efi ${server_ip}:${port}/${http_path}/bootx64.efi bootx64.efi || goto failed
 initrd --name bootmgr.exe ${server_ip}:${port}/${http_path}/bootmgr64.exe bootmgr.exe || goto failed
