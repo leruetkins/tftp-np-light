@@ -22,7 +22,7 @@
 	
 	2. В настройках DHCP от Microsoft выставляем:
   ```
-		В пуле ваших IP адресов, в разделе Scope Options добавить параметры:
+	В пуле ваших IP адресов, в разделе Scope Options добавить параметры:
 
 	    066 Boot Server Host Name "Имя или адрес машины где запущен TFTP-NP, например 192.168.0.2"
 	    067 Bootfile Name "/boot/efi/bootx64.efi"
