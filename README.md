@@ -1,5 +1,5 @@
 # tftp-np - PXE server of dreams!  
-## [Help](./docs/index.md)
+## [FAQ](./docs/faq-list.md)
  
 ### Как использовать на Windows:
 
