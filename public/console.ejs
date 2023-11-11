@@ -105,30 +105,33 @@
                 };
 
                 const navigateHistory = (direction) => {
-                    if (direction === 'up' && data.value.history_command.length > 0) {
-                        // Move up in command history
-                        if (data.value.historyIndex === -1) {
-                            // If starting from the current command or if input is cleared, show the most recent command first
-                            data.value.historyIndex = data.value.history_command.length - 1;
-                        } else if (data.value.historyIndex > 0) {
-                            // Show the previous command
-                            data.value.historyIndex--;
-                        } else if (data.value.historyIndex === 0) {
-                            // Clear the input field when reaching the most recent item in the command history and pressing up again
+                    const historyLength = data.value.history_command.length;
+
+                    if (direction === 'up') {
+                        if (historyLength > 0) {
+                            if (data.value.historyIndex === -1) {
+                                data.value.historyIndex = historyLength - 1;
+                            } else if (data.value.historyIndex > 0) {
+                                data.value.historyIndex--;
+                            } else if (data.value.historyIndex === 0) {
+                                data.value.send_command = '';
+                                data.value.historyIndex = -1;
+                                return;
+                            }
+                            data.value.send_command = data.value.history_command[data.value.historyIndex];
+                        }
+                    } else if (direction === 'down') {
+                        if (data.value.historyIndex < historyLength - 1) {
+                            data.value.historyIndex++;
+                            data.value.send_command = data.value.history_command[data.value.historyIndex];
+                        } else if (data.value.historyIndex === historyLength - 1) {
                             data.value.send_command = '';
                             data.value.historyIndex = -1;
                         }
-                        data.value.send_command = data.value.history_command[data.value.historyIndex];
-                    } else if (direction === 'down' && data.value.historyIndex < data.value.history_command.length - 1) {
-                        // Move down in command history
-                        data.value.historyIndex++;
-                        data.value.send_command = data.value.history_command[data.value.historyIndex];
-                    } else if (direction === 'down' && data.value.historyIndex === data.value.history_command.length - 1) {
-                        // Clear the input field when reaching the first item in the command history and pressing down again
-                        data.value.send_command = '';
-                        data.value.historyIndex = -1;
                     }
                 };
+
+
 
                 const handleInput = () => {
                     // Reset historyIndex when the input field is cleared
