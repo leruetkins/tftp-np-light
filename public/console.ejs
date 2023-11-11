@@ -22,7 +22,7 @@
         </div>
 
         <div class="panel credits" style="text-align: center">
-            <h3 class="text-sm font-bold" >Console</h3>
+            <h3 class="text-sm font-bold">Console</h3>
         </div>
 
         <div class="panel" style="line-height: 1.5" id="app">
@@ -38,43 +38,95 @@
                 data: {
                     message: "",
                     console: [],
-                    send_command: ""
+                    send_command: "",
+                    history_command: [],
+                    historyIndex: -1,
                 },
             });
-    
+        
             const Console = {
-                template: `
-                <div class="mb-4">
-                    <input class="bg-gray-900 p-2 w-full text-white" v-model="data.send_command" @keyup.enter="sendMessage" placeholder='Enter command "status", "history", "history 10" or "clear"' />
-                </div>    
-                <div class="bg-gray-900 p-4 text-white" style="height: 74vh; overflow-y: auto; white-space: pre-line;">
-                    <ul>
-                        <li v-for="logMessage in data.console.slice().reverse()" class="text-gray-300">{{ logMessage }}</li>
-                    </ul>
-                </div>
-                `,
+        template: `
+            <div class="mb-4">
+                <input
+                    class="bg-gray-900 p-2 w-full text-white"
+                    v-model="data.send_command"
+                    @keyup.enter="sendMessage"
+                    @keydown.up.prevent="navigateHistory('up')"
+                    @keydown.down.prevent="navigateHistory('down')"
+                    @input="handleInput"
+                    placeholder='Enter command "status", "history", "history 10" or "clear"'
+                />
+            </div>
+            <div class="bg-gray-900 p-4 text-white" style="height: 74vh; overflow-y: auto; white-space: pre-line;">
+                <ul>
+                    <li v-for="logMessage in data.console.slice().reverse()" class="text-gray-300">{{ logMessage }}</li>
+                </ul>
+            </div>
+        `,
                 setup() {
                     const { data } = Vue.toRefs(dataStore);
-    
+        
                     const sendMessage = () => {
-                        console.log("send message");
-                        // Check if the socket is initialized
-                        if (socket) {
-                            if (data.value.send_command.toLowerCase() === 'clear') {
-                        // Clear the console array
-                        data.value.console = [];
-                            }
-                            // Your existing logic for sending a message
-                            socket.send(JSON.stringify({ command: data.value.send_command }));
-                            data.value.send_command = "";
-                        } else {
-                            console.error('Socket is not initialized');
-                        }
-                    };
-    
+    console.log("send message");
+    // Check if the socket is initialized
+    if (socket) {
+        if (data.value.send_command.toLowerCase() === 'clear') {
+            // Clear the console array
+            data.value.console = [];
+        }
+
+        // Add the command to the history
+        data.value.history_command.push(data.value.send_command);
+
+        // Reset historyIndex when pressing Enter after selecting a command
+        data.value.historyIndex = -1;
+
+        // Your existing logic for sending a message
+        socket.send(JSON.stringify({ command: data.value.send_command }));
+        data.value.send_command = "";
+    } else {
+        console.error('Socket is not initialized');
+    }
+};
+        
+const navigateHistory = (direction) => {
+    if (direction === 'up' && data.value.history_command.length > 0) {
+        // Move up in command history
+        if (data.value.historyIndex === -1) {
+            // If starting from the current command or if input is cleared, show the most recent command first
+            data.value.historyIndex = data.value.history_command.length - 1;
+        } else if (data.value.historyIndex > 0) {
+            // Show the previous command
+            data.value.historyIndex--;
+        } else if (data.value.historyIndex === 0) {
+            // Clear the input field when reaching the most recent item in the command history and pressing up again
+            data.value.send_command = '';
+            data.value.historyIndex = -1;
+        }
+        data.value.send_command = data.value.history_command[data.value.historyIndex];
+    } else if (direction === 'down' && data.value.historyIndex < data.value.history_command.length - 1) {
+        // Move down in command history
+        data.value.historyIndex++;
+        data.value.send_command = data.value.history_command[data.value.historyIndex];
+    } else if (direction === 'down' && data.value.historyIndex === data.value.history_command.length - 1) {
+        // Clear the input field when reaching the first item in the command history and pressing down again
+        data.value.send_command = '';
+        data.value.historyIndex = -1;
+    }
+};
+
+            const handleInput = () => {
+                // Reset historyIndex when the input field is cleared
+                if (data.value.send_command === '') {
+                    data.value.historyIndex = -1;
+                }
+            };
+        
                     return {
                         data,
                         sendMessage,
+                        navigateHistory,
+                        handleInput,
                     };
                 },
             };
