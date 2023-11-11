@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE edge" />
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="renderer" content="webkit" />
+        <meta name="wap-font-scale" content="no" />
+        <title>TFTP-NP ${app_version}</title>
+        <link rel="stylesheet" type="text/css" href="/assets/css/index.css" />
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+
+    <body class="root-dir">
+        <div class="panel breadcrumbs main" style="text-align: center">
+            <strong><a href="/">Main</a>|</strong>
+            <strong><a href="/files">Files</a>|</strong>
+            <strong><a href="/config">Config</a>|</strong>
+            <strong><a href="/menu_editor">iPXE menu</a>|</strong>
+            <strong><a href="/console">Console</a></strong>
+        </div>
+
+        <div class="panel credits" style="text-align: center">
+            <h3 class="text-sm font-bold" >Console</h3>
+        </div>
+
+        <div class="panel" style="line-height: 1.5" id="app">
+            <!-- Vue.js app will be mounted here -->
+            <console />
+        </div>
+
+        <!-- Include Vue.js -->
+        <script src="https://cdn.jsdelivr.net/npm/vue@3.2.27"></script>
+
+        <script>
+            const dataStore = Vue.reactive({
+                data: {
+                    message: "",
+                    console: [],
+                    send_command: ""
+                },
+            });
+    
+            const Console = {
+                template: `
+                <div class="mb-4">
+                    <input class="bg-gray-900 p-2 w-full text-white" v-model="data.send_command" @keyup.enter="sendMessage" placeholder='Enter command "status", "history", "history 10" or "clear"' />
+                </div>    
+                <div class="bg-gray-900 p-4 text-white" style="height: 74vh; overflow-y: auto; white-space: pre-line;">
+                    <ul>
+                        <li v-for="logMessage in data.console.slice().reverse()" class="text-gray-300">{{ logMessage }}</li>
+                    </ul>
+                </div>
+                `,
+                setup() {
+                    const { data } = Vue.toRefs(dataStore);
+    
+                    const sendMessage = () => {
+                        console.log("send message");
+                        // Check if the socket is initialized
+                        if (socket) {
+                            if (data.value.send_command.toLowerCase() === 'clear') {
+                        // Clear the console array
+                        data.value.console = [];
+                            }
+                            // Your existing logic for sending a message
+                            socket.send(JSON.stringify({ command: data.value.send_command }));
+                            data.value.send_command = "";
+                        } else {
+                            console.error('Socket is not initialized');
+                        }
+                    };
+    
+                    return {
+                        data,
+                        sendMessage,
+                    };
+                },
+            };
+    
+            const app = Vue.createApp({
+                data() {
+                    return dataStore;
+                },
+                render: () => Vue.h(Console),
+            });
+    
+            app.mount("#app");
+    
+            const reconnectInterval = 1000;
+            let socket = null;
+    
+            function connect() {
+                // Create a WebSocket connection
+                socket = new WebSocket(`ws://${window.location.host}`);
+    
+                socket.onmessage = (event) => {
+                    const message = event.data;
+    
+                    // Try to parse the message as JSON
+                    try {
+                        const jsonData = JSON.parse(message);
+    
+                        // Append the specific data you want to display to the console log array
+                        dataStore.data.console.push(jsonData.data);
+                        
+                    } catch (error) {
+                        console.error('Error parsing JSON:', error);
+                        // If the message is not valid JSON, you can handle it accordingly
+                    }
+                };
+    
+                socket.onclose = (event) => {
+                    if (event.wasClean) {
+                        console.log(`Соединение закрыто чисто, код=${event.code} reason=${event.reason}`);
+                    } else {
+                        console.error('Соединение прервано');
+                        setTimeout(connect, reconnectInterval);
+                    }
+                };
+            }
+    
+            // Connect when the script is loaded
+            connect();
+            </script>
+    </body>
+</html>
