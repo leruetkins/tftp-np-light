@@ -8,6 +8,8 @@
 ### 2.
 ![Screenshot_373](https://github.com/leruetkins/tftp-np-light/assets/15270519/84876f9b-a4e6-4a82-a2d8-b5b9f82ae88b)
 
+Сделайте по аналогии со всеми остальными.
+
 ### 3.
 ![Screenshot_374](https://github.com/leruetkins/tftp-np-light/assets/15270519/f91f1d15-2852-49fe-9e5d-4b4b04e3ad69)
 
