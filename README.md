@@ -34,7 +34,7 @@
       <summary>Фото:</summary>
       <img src="https://github.com/leruetkins/tftp-np-light/assets/15270519/026734c3-4a92-453a-ae2d-2c2d8b046961">
       </details>
-     **p.s.** В последних версиях 7 прошивки появилась возможность использовать разные загрузочные файлы для BIOS и UEFI. [Интсрукция](./docs/config_mikrotik.md).
+    **p.s.** В последних версиях 7 прошивки появилась возможность использовать разные загрузочные файлы для BIOS и UEFI. [Интсрукция](./docs/config_mikrotik.md).
      
 
 2. Запускаете один раз от администратора tftp-np-1.8.3-x64.exe для расшаривания папки с софтом. Если обновляетесь с предыдущих версий, то нужно удалить старую шару, запустить от админа: `net share tftp-np /delete` или запустите от админа `tftp-np\tftp-np\boot\addons\scripts\admin_net_delete_tftp-np.bat`
