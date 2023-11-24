@@ -61,6 +61,7 @@
             render: () => Vue.h({
                 template: `
                         <div class="relative h-full">
+                            
                             <div class="mb-3">
                                 <input class="bg-gray-900 p-2 w-full text-white" v-model="data.send_command" @keyup.enter="sendMessage"
                                     @keydown.up.prevent="navigateHistory('up')" @keydown.down.prevent="navigateHistory('down')"
@@ -76,6 +77,7 @@
                             </div>
 
                             <div class="relative">
+                                
                                 <!-- Button for toggling fullscreen -->
                                 <button v-if="isFullScreen = true" @click="toggleFullScreen"
                                     class="text-white hover:bg-slate-700 py-2 px-2 rounded-xl absolute bottom-6 right-6 z-10"
@@ -88,7 +90,7 @@
                                     </svg>
                                 </button>
 
-                                <div id="console" class="bg-gray-900 p-0 text-white h-screen overflow-y-auto"
+                                <div id="console" class="bg-gray-900 p-0 text-white h-screen overflow-y-auto p-2"
                                     style="height: 70vh; white-space: pre-wrap;">
                                     <ul>
                                         <li v-for="logMessage in data.console.slice().reverse()" class="text-gray-300">
@@ -150,6 +152,30 @@
                         if (socket) {
                             if (data.send_command.toLowerCase() === 'clear') {
                                 data.console = [];
+                                data.send_command = "";
+                                return
+                            } else if (data.send_command.toLowerCase() === 'help') {
+
+                                var consoleWindow = document.getElementById("console");
+
+
+                                var commands = [
+                                    "help - показывает помощь",
+                                    "status - показывает статус",
+                                    "history - показ последних строк из лога",
+                                    "history 10 - показывает 10 последних строк из лога",
+                                    "clear - очищает консоль"
+                                ];
+
+                                commands.reverse();
+
+                                commands.forEach(function(command) {
+                                    data.console.push(command);
+                                });
+                                data.send_command = "";
+                                return
+
+                                
                             }
                             data.history_command.push(data.send_command);
                             data.historyIndex = -1;
