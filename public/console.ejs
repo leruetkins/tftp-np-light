@@ -13,7 +13,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="root-dir">
+<body class="root-dir p-0">
     <div class="panel breadcrumbs main" style="text-align: center">
         <strong><a href="/">Main</a>|</strong>
         <strong><a href="/files">Files</a>|</strong>
@@ -88,8 +88,8 @@
                                     </svg>
                                 </button>
 
-                                <div id="console" class="bg-gray-900 p-2 text-white h-screen overflow-y-auto"
-                                    style="height: 66vh; white-space: pre-wrap;">
+                                <div id="console" class="bg-gray-900 p-0 text-white h-screen overflow-y-auto"
+                                    style="height: 70vh; white-space: pre-wrap;">
                                     <ul>
                                         <li v-for="logMessage in data.console.slice().reverse()" class="text-gray-300">
                                             {{ logMessage }}</li>
@@ -108,7 +108,7 @@
 
                         const handleFullScreenChange = () => {
                             // Set height based on fullscreen state
-                            consoleDiv.style.height = document.fullscreenElement ? '92vh' : '66vh';
+                            consoleDiv.style.height = document.fullscreenElement ? '92vh' : '70vh';
                         };
 
 
