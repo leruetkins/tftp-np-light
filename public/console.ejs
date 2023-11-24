@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-us" class="h-screen">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -8,7 +8,7 @@
     <meta name="format-detection" content="telephone=no" />
     <meta name="renderer" content="webkit" />
     <meta name="wap-font-scale" content="no" />
-    <title>TFTP-NP ${app_version}</title>
+    <title>TFTP-NP <%- version %></title>
     <link rel="stylesheet" type="text/css" href="/assets/css/index.css" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -26,14 +26,18 @@
         <h3 class="text-sm font-bold">Console</h3>
     </div>
 
+
     <div class="panel" style="line-height: 1.5" id="app">
         <!-- Vue.js app will be mounted here -->
+
+
         <console />
+
     </div>
+
 
     <!-- Include Vue.js -->
     <script src="https://cdn.jsdelivr.net/npm/vue@3.2.27"></script>
-
     <script>
         const dataStore = Vue.reactive({
             data: {
@@ -45,120 +49,167 @@
             },
         });
 
-        const {
-            createApp,
-            reactive,
-            toRefs,
-            h
-        } = Vue;
 
-        const Console = {
-            template: `
-                        <div class="mb-4 relative">
-                <input class="bg-gray-900 p-2 w-full text-white" v-model="data.send_command" @keyup.enter="sendMessage"
-                    @keydown.up.prevent="navigateHistory('up')" @keydown.down.prevent="navigateHistory('down')"
-                    @input="handleInput" placeholder='Enter command "status", "history", "history 10" or "clear"' />
-                <div v-if="data.send_command !== ''"
-                    class="absolute inset-y-0 right-2 flex items-center pl-3 text-gray-700 hover:text-white dark:text-gray-300 dark:hover:text-white"
-                    @click="clearInput">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-6 h-6 cursor-pointer">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </div>
-            </div>
-
-            <div class="bg-gray-900 p-4 text-white" style="height: 66vh; overflow-y: auto; white-space: pre-line;">
-                <ul>
-                    <li v-for="logMessage in data.console.slice().reverse()" class="text-gray-300">{{ logMessage }}</li>
-                </ul>
-            </div>
-            `,
-            setup() {
-                const {
-                    data
-                } = Vue.toRefs(dataStore);
-
-                const sendMessage = () => {
-                    console.log("send message");
-                    // Check if the socket is initialized
-                    if (socket) {
-                        if (data.value.send_command.toLowerCase() === 'clear') {
-                            // Clear the console array
-                            data.value.console = [];
-                        }
-
-                        // Add the command to the history
-                        data.value.history_command.push(data.value.send_command);
-
-                        // Reset historyIndex when pressing Enter after selecting a command
-                        data.value.historyIndex = -1;
-
-                        // Your existing logic for sending a message
-                        socket.send(JSON.stringify({
-                            command: data.value.send_command
-                        }));
-                        data.value.send_command = "";
-                    } else {
-                        console.error('Socket is not initialized');
-                    }
-                };
-
-                const navigateHistory = (direction) => {
-                    const historyLength = data.value.history_command.length;
-
-                    if (direction === 'up') {
-                        if (historyLength > 0) {
-                            if (data.value.historyIndex === -1) {
-                                data.value.historyIndex = historyLength - 1;
-                            } else if (data.value.historyIndex > 0) {
-                                data.value.historyIndex--;
-                            } else if (data.value.historyIndex === 0) {
-                                data.value.send_command = '';
-                                data.value.historyIndex = -1;
-                                return;
-                            }
-                            data.value.send_command = data.value.history_command[data.value.historyIndex];
-                        }
-                    } else if (direction === 'down') {
-                        if (data.value.historyIndex < historyLength - 1) {
-                            data.value.historyIndex++;
-                            data.value.send_command = data.value.history_command[data.value.historyIndex];
-                        } else if (data.value.historyIndex === historyLength - 1) {
-                            data.value.send_command = '';
-                            data.value.historyIndex = -1;
-                        }
-                    }
-                };
-
-
-
-                const handleInput = () => {
-                    // Reset historyIndex when the input field is cleared
-                    if (data.value.send_command === '') {
-                        data.value.historyIndex = -1;
-                    }
-                };
-
-                const clearInput = () => {
-                    data.value.send_command = '';
-                }
-
-                return {
-                    data,
-                    sendMessage,
-                    navigateHistory,
-                    handleInput,
-                    clearInput
-                };
-            },
-        };
 
         const app = Vue.createApp({
             data() {
-                return dataStore;
+                return {
+                    ...dataStore.data,
+                };
             },
-            render: () => Vue.h(Console),
+
+            render: () => Vue.h({
+                template: `
+                        <div class="relative h-full">
+                            <div class="mb-3">
+                                <input class="bg-gray-900 p-2 w-full text-white" v-model="data.send_command" @keyup.enter="sendMessage"
+                                    @keydown.up.prevent="navigateHistory('up')" @keydown.down.prevent="navigateHistory('down')"
+                                    @input="handleInput" placeholder='Enter command "status", "history" or "clear"' />
+                                <div v-if="data.send_command !== ''"
+                                    class="absolute inset-y-0 right-2 flex items-center pl-3 text-gray-700 hover:text-white dark:text-gray-300 dark:hover:text-white"
+                                    @click="clearInput">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor" class="w-6 h-6 cursor-pointer">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="relative">
+                                <!-- Button for toggling fullscreen -->
+                                <button v-if="isFullScreen = true" @click="toggleFullScreen"
+                                    class="text-white hover:bg-slate-700 py-2 px-2 rounded-xl absolute bottom-6 right-6 z-10"
+                                    style="opacity: 0.5;">
+                                    <!-- SVG Icon dynamically based on fullscreen state -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                                    </svg>
+                                </button>
+
+                                <div id="console" class="bg-gray-900 p-2 text-white h-screen overflow-y-auto"
+                                    style="height: 66vh; white-space: pre-wrap;">
+                                    <ul>
+                                        <li v-for="logMessage in data.console.slice().reverse()" class="text-gray-300">
+                                            {{ logMessage }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        `,
+                setup() {
+                    const data = dataStore.data;
+                    let isFullScreen = false; // Move the variable here
+
+                    const toggleFullScreen = () => {
+                        const element = document.getElementById('app');
+                        const consoleDiv = document.getElementById('console');
+
+                        const handleFullScreenChange = () => {
+                            // Set height based on fullscreen state
+                            consoleDiv.style.height = document.fullscreenElement ? '92vh' : '66vh';
+                        };
+
+
+
+                        if (document.fullscreenEnabled || document.webkitFullscreenEnabled || document.msFullscreenEnabled) {
+                            if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                                // Exit fullscreen
+                                if (document.exitFullscreen) {
+                                    document.exitFullscreen();
+                                } else if (document.webkitExitFullscreen) {
+                                    document.webkitExitFullscreen();
+                                } else if (document.msExitFullscreen) {
+                                    document.msExitFullscreen();
+                                }
+                            } else {
+                                // Enter fullscreen
+                                if (element.requestFullscreen) {
+                                    element.requestFullscreen();
+                                } else if (element.webkitRequestFullscreen) {
+                                    element.webkitRequestFullscreen();
+                                } else if (element.msRequestFullscreen) {
+                                    element.msRequestFullscreen();
+                                }
+                            }
+
+                            // Listen for fullscreenchange event
+                            document.addEventListener('fullscreenchange', handleFullScreenChange);
+                            document.addEventListener('webkitfullscreenchange', handleFullScreenChange);
+                            document.addEventListener('MSFullscreenChange', handleFullScreenChange);
+
+
+                        }
+                    };
+
+
+
+                    const sendMessage = () => {
+                        console.log("send message");
+                        if (socket) {
+                            if (data.send_command.toLowerCase() === 'clear') {
+                                data.console = [];
+                            }
+                            data.history_command.push(data.send_command);
+                            data.historyIndex = -1;
+                            socket.send(JSON.stringify({
+                                command: data.send_command
+                            }));
+                            data.send_command = "";
+                        } else {
+                            console.error('Socket is not initialized');
+                        }
+                    };
+
+                    const navigateHistory = (direction) => {
+                        const historyLength = data.history_command.length;
+
+                        if (direction === 'up') {
+                            if (historyLength > 0) {
+                                if (data.historyIndex === -1) {
+                                    data.historyIndex = historyLength - 1;
+                                } else if (data.historyIndex > 0) {
+                                    data.historyIndex--;
+                                } else if (data.historyIndex === 0) {
+                                    data.send_command = '';
+                                    data.historyIndex = -1;
+                                    return;
+                                }
+                                data.send_command = data.history_command[data.historyIndex];
+                            }
+                        } else if (direction === 'down') {
+                            if (data.historyIndex < historyLength - 1) {
+                                data.historyIndex++;
+                                data.send_command = data.history_command[data.historyIndex];
+                            } else if (data.historyIndex === historyLength - 1) {
+                                data.send_command = '';
+                                data.historyIndex = -1;
+                            }
+                        }
+                    };
+
+                    const handleInput = () => {
+                        if (data.send_command === '') {
+                            data.historyIndex = -1;
+                        }
+                    };
+
+                    const clearInput = () => {
+                        data.send_command = '';
+                    };
+
+                    return {
+                        data,
+                        sendMessage,
+                        navigateHistory,
+                        handleInput,
+                        clearInput,
+                        toggleFullScreen,
+                        isFullScreen
+                    };
+                },
+            }),
         });
 
         app.mount("#app");
@@ -167,22 +218,18 @@
         let socket = null;
 
         function connect() {
-            // Create a WebSocket connection
             socket = new WebSocket(`ws://${window.location.host}`);
 
             socket.onmessage = (event) => {
                 const message = event.data;
 
-                // Try to parse the message as JSON
                 try {
                     const jsonData = JSON.parse(message);
-
-                    // Append the specific data you want to display to the console log array
+                    console.log(jsonData)
                     dataStore.data.console.push(jsonData.data);
 
                 } catch (error) {
                     console.error('Error parsing JSON:', error);
-                    // If the message is not valid JSON, you can handle it accordingly
                 }
             };
 
@@ -196,7 +243,6 @@
             };
         }
 
-        // Connect when the script is loaded
         connect();
     </script>
 </body>
