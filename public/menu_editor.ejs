@@ -28,8 +28,8 @@
 		<h3 id="notification"></h3>
 	</div>
 
-	<div class="textarea"><textarea id="textarea1" style="height: 65vh; margin-bottom: 10px;"></textarea>
-		<label for="featureCheckbox">Enable line breaks</label>
+	<div class="textarea"><textarea id="textarea1" style="height: 65vh; margin-bottom: 10px; overflow-X: auto; white-Space: pre"></textarea>
+		<label for="featureCheckbox">Line breaks</label>
 		<input type="checkbox" id="featureCheckbox" onchange="toggleFeatures()">
 	</div>
 
@@ -52,7 +52,7 @@
 			textarea.style.whiteSpace = 'pre-wrap'; // Enable line breaks
 		} else {
 			textarea.style.overflowX = 'auto'; // Disable horizontal scrollbar
-			textarea.style.whiteSpace = 'pre '; // Disable line breaks
+			textarea.style.whiteSpace = 'pre'; // Disable line breaks
 		}
 		localStorage.setItem('tftp-np.menu_editor.checkboxState', featureCheckbox.checked);
 
