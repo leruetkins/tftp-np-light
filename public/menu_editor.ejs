@@ -48,11 +48,11 @@
 		var featureCheckbox = document.getElementById('featureCheckbox');
 
 		if (featureCheckbox.checked) {
-			textarea.style.overflowX = 'auto'; // Enable horizontal scrollbar
-			textarea.style.whiteSpace = 'pre'; // Enable line breaks
+			textarea.style.overflowX = 'hidden'; // Enable horizontal scrollbar
+			textarea.style.whiteSpace = 'pre-wrap'; // Enable line breaks
 		} else {
-			textarea.style.overflowX = 'hidden'; // Disable horizontal scrollbar
-			textarea.style.whiteSpace = 'pre-wrap '; // Disable line breaks
+			textarea.style.overflowX = 'auto'; // Disable horizontal scrollbar
+			textarea.style.whiteSpace = 'pre '; // Disable line breaks
 		}
 		localStorage.setItem('tftp-np.menu_editor.checkboxState', featureCheckbox.checked);
 
