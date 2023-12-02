@@ -1,7 +1,7 @@
 #!ipxe
 
 
-set menu_version 1.8.3
+set menu_version 1.9.0
 set server_ip http://<%- auth %><%- boot_ip %>
 set nfs_ip <%- boot_ip %>
 set port <%= port %>
@@ -71,6 +71,9 @@ menu TFTP-NP 2022 ${version} ${boot_mode} ${update} ${update_version}
 item --gap ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${space} MAC:${net0/mac:hexhyp} ${space} IP:${ip}
 item --gap
 
+ifexist /boot/ipxes && item --gap TEST MENU
+    ifexist /boot/ipxes && item ipxes ${space} * IPXES 
+
 item --gap ACRONIS MENU
     item acronisdd ${space} * Acronis Disk Director 12
     item acronisti ${space} * Acronis True Image 2017
@@ -122,6 +125,9 @@ item --gap iIPXE shell
     item exit ${space} * Exit
     
 choose target && goto ${target}
+
+:ipxes
+chain ${server_ip}:${port}/ipxes
 
 :fog
 set arch ${buildarch}
