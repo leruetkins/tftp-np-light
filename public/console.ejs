@@ -10,7 +10,7 @@
     <meta name="wap-font-scale" content="no" />
     <title>TFTP-NP <%- version %></title>
     <link rel="stylesheet" type="text/css" href="/assets/css/index.css" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/js/tailwindcss@3.4.1.js"></script>
 </head>
 
 <body class="root-dir p-0">
@@ -37,7 +37,7 @@
 
 
     <!-- Include Vue.js -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.27"></script>
+    <script src="/assets/js/vue.global.prod.min@3.4.15.js"></script>
     <script>
         const dataStore = Vue.reactive({
             data: {
@@ -156,34 +156,38 @@
                                 data.historyIndex = -1;
                                 data.send_command = "";
                                 return
-                            } else if (data.send_command.toLowerCase() === 'help') {
+                            } 
+                            // else if (data.send_command.toLowerCase() === 'help') {
 
-                                var consoleWindow = document.getElementById("console");
+                            //     var consoleWindow = document.getElementById("console");
 
 
-                                var commands = [
-                                    "help - показывает помощь",
-                                    "status - показывает статус",
-                                    "history - показ последних строк из лога",
-                                    "history 10 - показывает 10 последних строк из лога",
-                                    "clear - очищает консоль",
-                                    "↑ или ↓ - навигация по истории команд" 
+                            //     var commands = [
+                            //         "help - показывает помощь",
+                            //         "status - показывает статус",
+                            //         "history - показ последних строк из лога",
+                            //         "history 10 - показывает 10 последних строк из лога",
+                            //         "clear - очищает консоль",
+                            //         "ipxes new new_pack_name \"Pack title\" Category - создание шаблона для ipxes пака ",
+                            //         "↑ или ↓ - навигация по истории команд" 
 
                             
-                                ];
+                            //     ];
 
-                                commands.reverse();
+                            //     commands.reverse();
 
-                                commands.forEach(function(command) {
-                                    data.console.push(command);
-                                });
-                                data.history_command.push(data.send_command);
-                                data.historyIndex = -1;
-                                data.send_command = "";
-                                return
+                            //     commands.forEach(function(command) {
+                            //         data.console.push(command);
+                            //     });
+                            //     data.history_command.push(data.send_command);
+                            //     data.historyIndex = -1;
+                            //     data.send_command = "";
+                            //     return
 
                                 
-                            } else if(data.send_command.toLowerCase() === '') {
+                            // } 
+                            
+                            else if(data.send_command.toLowerCase() === '') {
                                 return
                             }
                             data.history_command.push(data.send_command);
