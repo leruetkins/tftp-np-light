@@ -1,7 +1,7 @@
 #!ipxe
 
 
-set menu_version 1.9.8
+set menu_version 1.9.15
 set server_ip http://<%- auth %><%- boot_ip %>
 set nfs_ip <%- boot_ip %>
 set port <%= port %>
@@ -22,6 +22,8 @@ set cls ${esc:string}[2J  # ANSI clear screen sequence - "^[[2J"
 echo ${cls}
 
 console --x 1024 --y 768 
+
+iseq ${lockscreen} 0 && set lockscreen_change_text [ ] Enable lockscreen || set lockscreen_change_text [*] Disable lockscreen 
 
 isset ${go_to} && goto ${go_to} ||
 iseq ${lockscreen} 0 && goto start || goto lockscreen
@@ -117,11 +119,12 @@ item --gap UTILS MENU
     iseq ${platform} pcbios && item goldmempro ${space} * GoldMemory PRO ||
 
 item --gap NETINSTALL MENU
-    item nabeninstall ${space} * Naben Install        
+    item nabeninstall ${space} * Naben Install ...        
     #item fog ${space} * Fog Project
     #item iventoy ${space} * iVentoy     
 
 item --gap iIPXE shell
+    item settings ${space} * Settings
     item shell ${space} * Drop to iPXE shell 
     item config ${space} * Go to config
     item reboot ${space} * Reboot    
@@ -134,7 +137,23 @@ choose target && goto ${target}
 chain --replace ${server_ip}:${port}/store
 
 :ipxes
-chain ${server_ip}:${port}/ipxes
+chain --replace ${server_ip}:${port}/ipxes
+
+:settings
+menu TFTP-NP 2022 ${version} ${boot_mode} ${update} ${update_version} 
+item --gap SETTINGS MENU
+    item lockscreen_change ${space} ${lockscreen_change_text} 
+
+item --gap
+    item goback <- Go back
+    
+choose target && goto ${target}
+
+:lockscreen_change
+params
+param locksreen_change_state
+initrd ${server_ip}:${port}/command##params
+chain --replace ${server_ip}:${port}/menu/settings
 
 :fog
 set arch ${buildarch}
@@ -443,6 +462,9 @@ goto start
 
 :config
 config ||
+goto start
+
+:goback
 goto start
 
 :exit
