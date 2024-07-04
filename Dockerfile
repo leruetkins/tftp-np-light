@@ -37,11 +37,11 @@ RUN ln -s /app/boot/soft /tftp-np
 RUN echo "/tftp-np *(ro,sync,no_subtree_check)" > /etc/exports
 
 # Copy the file to the root directory
-COPY tftp-np-1.9.8-linux-x64.bin /app/tftp-np-1.9.8-linux-x64.bin
+COPY tftp-np-1.9.15-linux-x64.bin /app/tftp-np-1.9.15-linux-x64.bin
 
 # Grant execute permission to the file
-RUN chmod +x /app/tftp-np-1.9.8-linux-x64.bin
+RUN chmod +x /app/tftp-np-1.9.15-linux-x64.bin
 
 # Run the specified file
-CMD ["sh", "-c", "rpcbind -w & smbd --foreground --no-process-group & /app/tftp-np-1.9.8-linux-x64.bin"]
+CMD ["sh", "-c", "rpcbind -w & smbd --foreground --no-process-group & /app/tftp-np-1.9.15-linux-x64.bin"]
 
