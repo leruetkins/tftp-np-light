@@ -1,0 +1,30 @@
+list disk
+rem == CreatePartitions-UEFI.txt ==
+rem == These commands are used with DiskPart to
+rem    create five partitions
+rem    for a UEFI/GPT-based PC.
+rem    Adjust the partition sizes to fill the drive
+rem    as necessary. ==
+
+rem WinNTSetup_Boot=S:
+rem WinNTSetup_Install=W:
+
+select disk 0
+clean
+convert gpt
+rem == 1. EFI partition =========================
+create partition efi size=100
+rem    ** NOTE: For Advanced Format 4Kn drives,
+rem               change this value to size = 260 ** 
+format quick fs=fat32 label="EFI"
+assign letter="S"
+rem == 2. Microsoft Reserved (MSR) partition =======
+create partition msr size=128
+rem == 3. Windows partition ========================
+rem 153830=150GB
+rem 102400=100GB
+create partition primary
+format quick fs=ntfs label="WIN10"
+assign letter="W"
+list volume
+exit

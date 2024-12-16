@@ -1,0 +1,46 @@
+#!ipxe
+
+
+set menu_version 1.9.15
+set server_ip http://<%- auth %><%- boot_ip %>
+set nfs_ip <%- boot_ip %>
+set port <%= port %>
+set update <%= update %>
+set update_version <%= update_version %>
+set version <%= version %>
+
+
+
+
+set space:hex 20:20
+set space ${space:string}
+set pass 111 
+
+set esc:hex 1b            # ANSI escape character - "^["
+set cls ${esc:string}[2J  # ANSI clear screen sequence - "^[[2J"
+echo ${cls}
+
+console --x 1024 --y 768 
+
+
+:start
+colour --rgb 0xffffff 6
+#cpair --foreground 7 --background 9 0
+cpair --foreground 6 --background 9 1
+cpair --foreground 7 --background 1 2
+cpair --foreground 7 --background 9 3
+cpair --foreground 7 --background 9 4
+cpair --foreground 7 --background 9 5
+cpair --foreground 7 --background 9 6
+cpair --foreground 7 --background 9 7
+
+#console -l 32 -r 32 -t 32 -b 32 -k --x 1024 --y 768 -d 24  -p ${server_ip}:${port}/${platform}.png
+#imgfree ${platform}.png
+set cls:hex 1b:5b:4a
+set cls ${cls:string}
+menu TFTP-NP 2022 ${version} ${boot_mode} ${update} ${update_version} 
+item --gap ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${space} ${space} MAC:${net0/mac:hexhyp} ${space} IP:${ip}
+item --gap
+
+item --gap IPXES MENU
+
