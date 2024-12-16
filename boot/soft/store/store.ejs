@@ -1,16 +1,12 @@
 #!ipxe
 
-
-set menu_version 1.8.3
+set menu_version 2.0.0
 set server_ip http://<%- auth %><%- boot_ip %>
 set nfs_ip <%- boot_ip %>
 set port <%= port %>
 set update <%= update %>
 set update_version <%= update_version %>
 set version <%= version %>
-
-
-
 
 set space:hex 20:20
 set space ${space:string}
