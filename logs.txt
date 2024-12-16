@@ -1,5 +1,0 @@
-[16-12-2024 15:52:41]  HTTP: 127.0.0.1 - GET:/ 200 0.014 ms
-[16-12-2024 15:52:41]  HTTP: 127.0.0.1 - GET:/assets/css/index.css 200 0.005 ms
-[16-12-2024 15:52:41]  HTTP: 127.0.0.1 - GET:/images/tftp-np-donate.png 200 0.004 ms
-[16-12-2024 15:52:41]  HTTP: 127.0.0.1 - GET:/favicon.ico 200 0.005 ms
-[16-12-2024 15:52:41]  INFO: Remote console connected from ip: 127.0.0.1
