@@ -1,6 +1,8 @@
 # TFTP-NP - PXE server of dreams!  
 ## [FAQ](./docs/faq-list.md)
 
+![TFTP-NP in action](./docs/tftp-np.gif)
+
 ## Что такое TFTP-NP:
 
 **TFTP-NP** - это загрузочный PXE сервер, он позволяет вам запускать операционные системы и полезные программы по сети, используя технологию [PXE](https://ru.wikipedia.org/wiki/PXE). В данном случае используется загрузчик iPXE. Работает на BIOS и UEFI системах, есть только некоторые различия в меню.
