@@ -49,7 +49,7 @@
        067 Bootfile Name "/boot/efi/bootx64.efi"
        ```
 
-       Более подробно смотрите по [ссылке](https://wtware.ru/win/dhcp2012config.html)
+       Более подробно смотрите по [ссылке](https://github.com/leruetkins/tftp-np-light/wiki/%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-DHCP%E2%80%90%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80-%D0%BD%D0%B0-Windows-Server-2012)
     3. Если у вас DHCP сервер от Mikrotik с версией прошивки `ниже 7.0`, то выставляем только для BIOS или UEFI:
   
         <details>
